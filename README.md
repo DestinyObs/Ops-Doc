@@ -9,7 +9,7 @@ Create a streamlined tunneling service as an alternative to `ngrok` and `serveo.
 
 ### Key Features:
 - **SSH Reverse Forwarding:** Securely forward local ports using SSH reverse tunneling.
-- **Proxy Management:** Efficiently manage HTTP/HTTPS proxies to forward traffic on ports 80 and 443.
+- **Proxy Management:** Efficiently manage HTTP 80.
 - **Wildcard Domains:** Support a variety of subdomains for greater flexibility.
 - **Automatic Port Management:** Dynamically allocate and manage ports for reverse forwarding.
 
@@ -187,4 +187,4 @@ This will reverse forward your local application on port 3000 to a dynamically g
 
 ## Conclusion
 
-This tunneling service is a robust alternative to `ngrok` and `serveo.net`, offering secure, dynamic URLs for accessing local applications using SSH reverse forwarding and Nginx proxy management.
+This tunneling service is made to be an alternative to `ngrok` and `serveo.net`, offering secure, dynamic URLs for accessing local applications using SSH reverse forwarding and Nginx proxy management.
