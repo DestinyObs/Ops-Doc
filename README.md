@@ -1,17 +1,17 @@
-### Tunneling Service Documentation
+### Tunnel Service Documentation
 
 ---
 
 ## Project Overview
 
 ### Objective:
-Develop an alternative tunneling service to `ngrok` and `serveo.net` that utilizes SSH reverse forwarding to provide dynamic public URLs for accessing local applications.
+Create a streamlined tunneling service as an alternative to `ngrok` and `serveo.net`, using SSH reverse forwarding to offer dynamic public URLs for local applications.
 
 ### Key Features:
-- **SSH Reverse Forwarding:** Allow dynamic port forwarding using SSH reverse tunneling.
-- **Proxy Management:** Properly manage HTTP/HTTPS proxy settings to forward traffic on port 80 and 443.
-- **Wildcard Domains:** Support a range of subdomains for tunneling, providing flexibility for users.
-- **Automatic Port Management:** Dynamically allocate available ports for reverse forwarding.
+- **SSH Reverse Forwarding:** Securely forward local ports using SSH reverse tunneling.
+- **Proxy Management:** Efficiently manage HTTP/HTTPS proxies to forward traffic on ports 80 and 443.
+- **Wildcard Domains:** Support a variety of subdomains for greater flexibility.
+- **Automatic Port Management:** Dynamically allocate and manage ports for reverse forwarding.
 
 ---
 
@@ -19,7 +19,7 @@ Develop an alternative tunneling service to `ngrok` and `serveo.net` that utiliz
 
 ### 1. Initialization and Setup
 
-The script begins by defining the domain name and log file location. It also sets up a base port for dynamic port allocation:
+The script begins by setting the domain name, log file location, and a base port for dynamic allocation:
 
 ```bash
 #!/bin/bash
@@ -34,7 +34,7 @@ echo "$(date): Script started" >> "$LOG_FILE"
 
 ### 2. Generating Random Subdomains
 
-The script generates a random subdomain for each tunnel session:
+A random subdomain is generated for each tunnel session:
 
 ```bash
 function generate_subdomain() {
@@ -44,7 +44,7 @@ function generate_subdomain() {
 
 ### 3. Logging and Port Management
 
-Logging is handled by a simple function that appends log entries to the log file:
+Logging is streamlined with a function that appends entries to the log file:
 
 ```bash
 function log() {
@@ -52,7 +52,7 @@ function log() {
 }
 ```
 
-Dynamic port allocation is done through a function that finds an available port and marks it as used:
+Ports are dynamically allocated and managed:
 
 ```bash
 function get_available_port() {
@@ -65,11 +65,7 @@ function get_available_port() {
         fi
     done
 }
-```
 
-Ports are released when no longer in use:
-
-```bash
 function remove_port() {
     local port=$1
     sed -i "/^$port$/d" "$PORTS_FILE"
@@ -78,7 +74,7 @@ function remove_port() {
 
 ### 4. Handling Connections
 
-This function sets up the tunnel by generating a random subdomain and allocating a port, then it configures iptables and updates Nginx:
+A new tunnel is set up by generating a random subdomain, allocating a port, and configuring iptables and Nginx:
 
 ```bash
 function handle_connection() {
@@ -89,7 +85,7 @@ function handle_connection() {
     log "Handling connection: $subdomain.$DOMAIN -> localhost:$local_port (Remote port: $remote_port)"
     echo "Tunnel established: https://$subdomain.$DOMAIN" | tee /home/tunnel/tunnel_url.txt
 
-    # Set up iptables rule for this specific subdomain
+    # Set up iptables rule
     sudo iptables -t nat -A PREROUTING -p tcp -d "$subdomain.$DOMAIN" --dport 80 -j REDIRECT --to-port $remote_port
     sudo iptables -t nat -A PREROUTING -p tcp -d "$subdomain.$DOMAIN" --dport 443 -j REDIRECT --to-port $remote_port
 
@@ -138,7 +134,7 @@ EOF
 
 ### 5. Running the Script
 
-The main script calls the `handle_connection` function with the desired port:
+The main script triggers the `handle_connection` function with the desired port:
 
 ```bash
 log "Script running. Waiting for connection."
@@ -150,10 +146,9 @@ log "Script ended"
 
 ## Nginx Configuration
 
-The Nginx server is configured to handle both HTTP and HTTPS requests. It redirects HTTP traffic to HTTPS and proxies HTTPS traffic to the appropriate local port:
+Nginx is configured to handle HTTP requests and redirect them to HTTPS:
 
 ```conf
-
 server {
     listen 80;
     server_name *.mobyme.site;
@@ -180,18 +175,16 @@ include /etc/nginx/sites-enabled/*.conf;
 
 ## Usage
 
-To use the tunneling service, run the following SSH command:
+To start the tunneling service, use the following SSH command:
 
 ```bash
 ssh -R 8080:localhost:3000 tunnel@mobyme.site
 ```
 
-This command reverse forwards your local application running on port 3000 to a dynamically generated subdomain on `mobyme.site`, allowing public access.
+This will reverse forward your local application on port 3000 to a dynamically generated subdomain on `mobyme.site`, making it publicly accessible.
 
 ---
 
 ## Conclusion
 
-This tunneling service provides an efficient alternative to existing solutions like `ngrok` and `serveo.net`. It leverages SSH reverse forwarding, dynamic subdomain allocation, and Nginx proxy management to create secure, publicly accessible URLs for local applications.
-
----
+This tunneling service is a robust alternative to `ngrok` and `serveo.net`, offering secure, dynamic URLs for accessing local applications using SSH reverse forwarding and Nginx proxy management.
